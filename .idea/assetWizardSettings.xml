@@ -28,8 +28,9 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="test" />
-                            <entry key="sourceFile" value="C:\Users\sebas\Documents\TictacToeProject" />
+                            <entry key="assetSourceType" value="FILE" />
+                            <entry key="outputName" value="x" />
+                            <entry key="sourceFile" value="D:\DIVERS\Documents\progra\X.svg" />
                           </map>
                         </option>
                       </PersistentState>

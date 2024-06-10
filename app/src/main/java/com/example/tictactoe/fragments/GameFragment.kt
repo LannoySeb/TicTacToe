@@ -29,7 +29,11 @@ class GameFragment : Fragment() {
         // Inflate the layout for this fragment
         binding = FragmentGameBinding.inflate(inflater, container, false)
         if(binding.box3 != null) {
-            binding.box3.setImageResource(R.drawable.test)
+            binding.box3.setImageResource(R.drawable.o)
+            binding.box4.setImageResource(R.drawable.x)
+            binding.box5.setImageResource(R.drawable.x)
+
+
         }
         return binding.root;
     }

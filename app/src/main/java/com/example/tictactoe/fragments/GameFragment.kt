@@ -1,5 +1,6 @@
 package com.example.tictactoe.fragments
 
+import android.app.AlertDialog
 import android.graphics.Color
 import android.media.Image.Plane
 import android.os.Bundle
@@ -8,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.lifecycle.Observer
 import com.example.tictactoe.R
 import com.example.tictactoe.databinding.FragmentGameBinding
 import com.example.tictactoe.enumeration.BoxStates
@@ -36,10 +38,7 @@ class GameFragment : Fragment() {
         boardGame = listOf(binding.box0, binding.box1, binding.box2, binding.box3, binding.box4, binding.box5, binding.box6, binding.box7, binding.box8)
 
         binding.resetButton.setOnClickListener{
-            viewModel.resetBoard()
-            boardGame.forEach{
-                it.setImageResource(0)
-            }
+            ResetBoard()
         }
         boardGame.forEach{
             it.setOnClickListener {
@@ -47,6 +46,8 @@ class GameFragment : Fragment() {
                 viewModel.placeToken(boardGame.indexOf(it))
             }
         }
+
+        setupLiveDatas()
 
         return binding.root;
     }
@@ -62,4 +63,26 @@ class GameFragment : Fragment() {
 
         }
     }
+
+    private fun ResetBoard(){
+        viewModel.resetBoard()
+        boardGame.forEach{
+            it.setImageResource(0)
+        }
+    }
+
+    private fun setupLiveDatas(){
+        val winObserver = Observer<Boolean>{ win ->
+            if(win) {
+                val builder = AlertDialog.Builder(context)
+                builder.setTitle("It's a win")
+                builder.setPositiveButton("Retry") { dialog, wich ->
+                    ResetBoard()
+                }
+                builder.create().show()
+            }
+    }
+        viewModel.win.observe(viewLifecycleOwner, winObserver)
+    }
+
 }

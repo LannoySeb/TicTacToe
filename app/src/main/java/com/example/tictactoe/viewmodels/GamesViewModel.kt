@@ -24,7 +24,7 @@ class GamesViewModel : ViewModel() {
         }
     }
 
-    private fun resetBoard(){
+    public fun resetBoard(){
         gameBoard = mutableListOf(BoxStates.Empty, BoxStates.Empty, BoxStates.Empty, BoxStates.Empty, BoxStates.Empty, BoxStates.Empty, BoxStates.Empty, BoxStates.Empty, BoxStates.Empty)
     }
 }

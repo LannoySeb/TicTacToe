@@ -35,6 +35,12 @@ class GameFragment : Fragment() {
 
         boardGame = listOf(binding.box0, binding.box1, binding.box2, binding.box3, binding.box4, binding.box5, binding.box6, binding.box7, binding.box8)
 
+        binding.resetButton.setOnClickListener{
+            viewModel.resetBoard()
+            boardGame.forEach{
+                it.setImageResource(0)
+            }
+        }
         boardGame.forEach{
             it.setOnClickListener {
                 ToggleBox(it as ImageView, viewModel.nextToken)
@@ -46,6 +52,7 @@ class GameFragment : Fragment() {
     }
 
     private fun ToggleBox(box:ImageView, state:BoxStates) {
+        if(viewModel.gameBoard[boardGame.indexOf(box)] == BoxStates.Empty)
         when (state) {
             BoxStates.X -> box.setImageResource(R.drawable.x)
 

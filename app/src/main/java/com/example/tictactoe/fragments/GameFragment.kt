@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TableLayout
 import android.widget.TableRow
-import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.example.tictactoe.Model.Player
@@ -29,11 +28,20 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
  */
 class GameFragment : Fragment() {
 
-    lateinit var binding: FragmentGameBinding
+    /**
+     * Binding for the fragment.
+     */
+    private lateinit var binding: FragmentGameBinding
 
-    var boardGame = MutableList(0) { ImageView(context) }
-
+    /**
+     * [GamesViewModel] injected by koin.
+     */
     val viewModel by viewModel<GamesViewModel>()
+
+    /**
+     * GameBoard as a list of [ImageView]
+     */
+    private var boardGame = MutableList(0) { ImageView(context) }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -59,6 +67,10 @@ class GameFragment : Fragment() {
         return binding.root;
     }
 
+    /**
+     * Player place a symbol on a box.
+     * @param box [ImageView] that will be updated.
+     */
     private fun playTurn(box: ImageView){
         ToggleBox(box, viewModel.activePlayer.value!!.symbol)
         viewModel.playTurn(boardGame.indexOf(box))
@@ -67,6 +79,8 @@ class GameFragment : Fragment() {
 
     /***
      * Change the icon of an empty box.
+     * @param box [ImageView] that will be updated.
+     * @param state [BoxStates] that will be set.
      */
     private fun ToggleBox(box:ImageView, state:BoxStates) {
         if(viewModel.gameBoard[boardGame.indexOf(box)] == BoxStates.Empty) {
@@ -81,7 +95,12 @@ class GameFragment : Fragment() {
         }
     }
 
+    /**
+     * Initialize and generate all views needed for the board.
+     */
     private fun initializeBoardGame() {
+
+        // generate table rows
         for (row in 0 until viewModel.boardSize) {
             val tableRow = TableRow(context)
             tableRow.id = View.generateViewId()
@@ -94,6 +113,7 @@ class GameFragment : Fragment() {
             rowParams.weight = 1.0f
             tableRow.layoutParams = rowParams
 
+            //generates imageview for each column
             for (col in 0 until viewModel.boardSize) {
                 val imageView = ImageView(context)
                 imageView.id = View.generateViewId()
@@ -118,7 +138,7 @@ class GameFragment : Fragment() {
     }
 
     /***
-     * Reset the board to empty state.
+     * Reset the board to empty state visually and games data.
      */
     private fun resetBoard(){
         viewModel.resetBoard()
@@ -132,8 +152,10 @@ class GameFragment : Fragment() {
      */
     private fun setupLiveDatas(){
 
-
+        // Observer used to check the state of the game.
         val winObserver = Observer<GameState>{ win ->
+
+            // user win
             if(win == GameState.win) {
                 val builder = AlertDialog.Builder(context)
                 builder.setTitle("It's a win")
@@ -143,6 +165,8 @@ class GameFragment : Fragment() {
                 }
                 builder.create().show()
             }
+
+            // nobody win
             else if(win == GameState.draw) {
                 val builder = AlertDialog.Builder(context)
                 builder.setTitle("It's a draw")
@@ -155,17 +179,18 @@ class GameFragment : Fragment() {
         }
         viewModel.win.observe(viewLifecycleOwner, winObserver)
 
+        // Observer used to update the active player.
         val playerObserver = Observer<Player> { player ->
             if (player.type == PlayerType.bot) {
                 viewLifecycleOwner.lifecycleScope.launch {
-                    toggleButton(this@GameFragment.binding.gameBoard, false)
+                    toggleImageviewClick(this@GameFragment.binding.gameBoard, false)
 
                     delay(500)
                     if(viewModel.win.value == GameState.playing) {
                         botTurn()
                     }
 
-                    toggleButton(this@GameFragment.binding.gameBoard, true)
+                    toggleImageviewClick(this@GameFragment.binding.gameBoard, true)
                 }
             }
         }
@@ -173,6 +198,9 @@ class GameFragment : Fragment() {
         viewModel.activePlayer.observe(viewLifecycleOwner, playerObserver)
     }
 
+    /**
+     * The bot will play on a randomly selected box.
+     */
     private fun botTurn(){
         val selectedId = viewModel.getRandomBox()
         if(selectedId != null) {
@@ -181,15 +209,17 @@ class GameFragment : Fragment() {
     }
 
     /**
-     * Recursively disable buttons in a nested ViewGroup
+     * Recursively disable image views click in a ViewGroup
+     * @param viewGroup [ViewGroup] containing all views that will be enabled or disabled.
+     * @param enabled [Boolean] are the views enabled or disabled.
      */
-    private fun toggleButton(viewGroup : ViewGroup, enabled : Boolean) {
+    private fun toggleImageviewClick(viewGroup : ViewGroup, enabled : Boolean) {
         for (i in 0 until viewGroup.childCount) {
             val child = viewGroup.getChildAt(i)
             if (child is ImageView) {
                 child.isEnabled = enabled
             } else if (child is ViewGroup) {
-                toggleButton(child, enabled)
+                toggleImageviewClick(child, enabled)
             }
         }
     }

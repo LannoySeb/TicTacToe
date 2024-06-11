@@ -17,6 +17,7 @@ import com.example.tictactoe.Model.Player
 import com.example.tictactoe.R
 import com.example.tictactoe.databinding.FragmentGameBinding
 import com.example.tictactoe.enumeration.BoxStates
+import com.example.tictactoe.enumeration.GameState
 import com.example.tictactoe.enumeration.PlayerType
 import com.example.tictactoe.viewmodels.GamesViewModel
 import kotlinx.coroutines.delay
@@ -127,14 +128,26 @@ class GameFragment : Fragment() {
     }
 
     /***
-     * Setup of lives data observers.
+     * Setup of livedata observers.
      */
     private fun setupLiveDatas(){
-        val winObserver = Observer<Boolean>{ win ->
-            if(win) {
+
+        //
+        val winObserver = Observer<GameState>{ win ->
+            if(win == GameState.win) {
                 val builder = AlertDialog.Builder(context)
                 builder.setTitle("It's a win")
                 builder.setPositiveButton("Retry") { dialog, wich ->
+                    viewModel.resetGame()
+                    resetBoard()
+                }
+                builder.create().show()
+            }
+            else if(win == GameState.draw) {
+                val builder = AlertDialog.Builder(context)
+                builder.setTitle("It's a draw")
+                builder.setPositiveButton("Retry") { dialog, wich ->
+                    viewModel.resetGame()
                     resetBoard()
                 }
                 builder.create().show()
@@ -145,9 +158,14 @@ class GameFragment : Fragment() {
         val playerObserver = Observer<Player> { player ->
             if (player.type == PlayerType.bot) {
                 viewLifecycleOwner.lifecycleScope.launch {
-                    delay(500)
-                    botTurn()
+                    toggleButton(this@GameFragment.binding.gameBoard, false)
 
+                    delay(500)
+                    if(viewModel.win.value == GameState.playing) {
+                        botTurn()
+                    }
+
+                    toggleButton(this@GameFragment.binding.gameBoard, true)
                 }
             }
         }
@@ -156,8 +174,22 @@ class GameFragment : Fragment() {
     }
 
     private fun botTurn(){
-        var SelectedId = viewModel.getRandomBox()
-        boardGame[SelectedId].performClick()
+        val selectedId = viewModel.getRandomBox()
+        if(selectedId != null)
+        boardGame[selectedId].performClick()
     }
 
+    /**
+     * Recursively disable buttons in a nested ViewGroup
+     */
+    private fun toggleButton(viewGroup : ViewGroup, enabled : Boolean) {
+        for (i in 0 until viewGroup.childCount) {
+            val child = viewGroup.getChildAt(i)
+            if (child is ImageView) {
+                child.isEnabled = enabled
+            } else if (child is ViewGroup) {
+                toggleButton(child, enabled)
+            }
+        }
+    }
 }

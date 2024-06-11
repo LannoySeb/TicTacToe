@@ -11,12 +11,16 @@ import android.widget.ImageView
 import android.widget.TableLayout
 import android.widget.TableRow
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
+import com.example.tictactoe.Model.Player
 import com.example.tictactoe.R
 import com.example.tictactoe.databinding.FragmentGameBinding
 import com.example.tictactoe.enumeration.BoxStates
+import com.example.tictactoe.enumeration.GameState
+import com.example.tictactoe.enumeration.PlayerType
 import com.example.tictactoe.viewmodels.GamesViewModel
-import com.google.android.material.tabs.TabLayout.Tab
-import com.google.android.material.tabs.TabLayout.generateViewId
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
@@ -24,11 +28,20 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
  */
 class GameFragment : Fragment() {
 
-    lateinit var binding: FragmentGameBinding
+    /**
+     * Binding for the fragment.
+     */
+    private lateinit var binding: FragmentGameBinding
 
-    var boardGame = MutableList(0) { ImageView(context) }
-
+    /**
+     * [GamesViewModel] injected by koin.
+     */
     val viewModel by viewModel<GamesViewModel>()
+
+    /**
+     * GameBoard as a list of [ImageView]
+     */
+    private var boardGame = MutableList(0) { ImageView(context) }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,8 +58,7 @@ class GameFragment : Fragment() {
 
         boardGame.forEach{
             it.setOnClickListener {
-                ToggleBox(it as ImageView, viewModel.nextToken)
-                viewModel.playTurn(boardGame.indexOf(it))
+                playTurn(it as ImageView)
             }
         }
 
@@ -55,8 +67,20 @@ class GameFragment : Fragment() {
         return binding.root;
     }
 
+    /**
+     * Player place a symbol on a box.
+     * @param box [ImageView] that will be updated.
+     */
+    private fun playTurn(box: ImageView){
+        ToggleBox(box, viewModel.activePlayer.value!!.symbol)
+        viewModel.playTurn(boardGame.indexOf(box))
+    }
+
+
     /***
      * Change the icon of an empty box.
+     * @param box [ImageView] that will be updated.
+     * @param state [BoxStates] that will be set.
      */
     private fun ToggleBox(box:ImageView, state:BoxStates) {
         if(viewModel.gameBoard[boardGame.indexOf(box)] == BoxStates.Empty) {
@@ -71,7 +95,12 @@ class GameFragment : Fragment() {
         }
     }
 
+    /**
+     * Initialize and generate all views needed for the board.
+     */
     private fun initializeBoardGame() {
+
+        // generate table rows
         for (row in 0 until viewModel.boardSize) {
             val tableRow = TableRow(context)
             tableRow.id = View.generateViewId()
@@ -84,6 +113,7 @@ class GameFragment : Fragment() {
             rowParams.weight = 1.0f
             tableRow.layoutParams = rowParams
 
+            //generates imageview for each column
             for (col in 0 until viewModel.boardSize) {
                 val imageView = ImageView(context)
                 imageView.id = View.generateViewId()
@@ -108,7 +138,7 @@ class GameFragment : Fragment() {
     }
 
     /***
-     * Reset the board to empty state.
+     * Reset the board to empty state visually and games data.
      */
     private fun resetBoard(){
         viewModel.resetBoard()
@@ -118,20 +148,79 @@ class GameFragment : Fragment() {
     }
 
     /***
-     * Setup of lives data observers.
+     * Setup of livedata observers.
      */
     private fun setupLiveDatas(){
-        val winObserver = Observer<Boolean>{ win ->
-            if(win) {
+
+        // Observer used to check the state of the game.
+        val winObserver = Observer<GameState>{ win ->
+
+            // user win
+            if(win == GameState.win) {
                 val builder = AlertDialog.Builder(context)
                 builder.setTitle("It's a win")
                 builder.setPositiveButton("Retry") { dialog, wich ->
+                    viewModel.resetGame()
                     resetBoard()
                 }
                 builder.create().show()
             }
-    }
-        viewModel.win.observe(viewLifecycleOwner, winObserver)
+
+            // nobody win
+            else if(win == GameState.draw) {
+                val builder = AlertDialog.Builder(context)
+                builder.setTitle("It's a draw")
+                builder.setPositiveButton("Retry") { dialog, wich ->
+                    viewModel.resetGame()
+                    resetBoard()
+                }
+                builder.create().show()
+            }
+        }
+        viewModel.gameState.observe(viewLifecycleOwner, winObserver)
+
+        // Observer used to update the active player.
+        val playerObserver = Observer<Player> { player ->
+            if (player.type == PlayerType.bot) {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    toggleImageviewClick(this@GameFragment.binding.gameBoard, false)
+
+                    delay(500)
+                    if(viewModel.gameState.value == GameState.playing) {
+                        botTurn()
+                    }
+
+                    toggleImageviewClick(this@GameFragment.binding.gameBoard, true)
+                }
+            }
+        }
+
+        viewModel.activePlayer.observe(viewLifecycleOwner, playerObserver)
     }
 
+    /**
+     * The bot will play on a randomly selected box.
+     */
+    private fun botTurn(){
+        val selectedId = viewModel.getRandomBox()
+        if(selectedId != null) {
+            boardGame[selectedId].performClick()
+        }
+    }
+
+    /**
+     * Recursively disable image views click in a ViewGroup
+     * @param viewGroup [ViewGroup] containing all views that will be enabled or disabled.
+     * @param enabled [Boolean] are the views enabled or disabled.
+     */
+    private fun toggleImageviewClick(viewGroup : ViewGroup, enabled : Boolean) {
+        for (i in 0 until viewGroup.childCount) {
+            val child = viewGroup.getChildAt(i)
+            if (child is ImageView) {
+                child.isEnabled = enabled
+            } else if (child is ViewGroup) {
+                toggleImageviewClick(child, enabled)
+            }
+        }
+    }
 }

@@ -2,17 +2,36 @@ package com.example.tictactoe.viewmodels
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.tictactoe.Model.Player
 import com.example.tictactoe.enumeration.BoxStates
+import com.example.tictactoe.enumeration.GameState
+import com.example.tictactoe.enumeration.PlayerType
 
-class GamesViewModel : ViewModel() {
-
-    var boardSize : Int = 3
-
+/**
+ * Logic side of the game.
+ *
+ * @property boardSize size of the board.
+ * @property player player data.
+ * @property bot bot data.
+ */
+class GamesViewModel(var boardSize : Int = 3,
+                     private var player: Player = Player(PlayerType.player, BoxStates.X),
+                     private var bot: Player = Player(PlayerType.bot, BoxStates.O))
+    : ViewModel() {
+    /**
+     * Game board cells list.
+     */
     lateinit var gameBoard : MutableList<BoxStates>
 
-    var nextToken : BoxStates = BoxStates.X
+    /**
+     * Game current state.
+     */
+    var gameState : MutableLiveData<GameState> = MutableLiveData(GameState.playing)
 
-    var win : MutableLiveData<Boolean> = MutableLiveData(false)
+    /**
+     * Active player.
+     */
+    var activePlayer: MutableLiveData<Player> = MutableLiveData(player)
 
     init {
         resetBoard()
@@ -20,22 +39,53 @@ class GamesViewModel : ViewModel() {
 
     /***
      * Place a token on the board and check if the game is over.
+     * @param place index of the board cell where the token will be placed.
      */
-    public fun playTurn(place:Int){
-        gameBoard[place] = nextToken
+    public fun playTurn(place: Int){
+        var playerActive = activePlayer.value
+        if(playerActive != null) {
+            gameBoard[place] = playerActive.symbol
 
-        win.postValue(checkWin(nextToken))
+            gameState.postValue(checkWin(playerActive.symbol))
 
-        if(nextToken == BoxStates.X){
-            nextToken = BoxStates.O
-        }
-        else{
-            nextToken = BoxStates.X
+            activePlayer.postValue(if(playerActive.type == PlayerType.player) bot else player)
+
+        }else{
+            // TODO handle error
         }
     }
 
+    /**
+     * Get a random empty box index.
+     *
+     * @return index of the empty box or null if no empty box.
+     */
+    public fun getRandomBox():Int?{
+
+        val emptyIndices = gameBoard.withIndex()
+            .filter { it.value == BoxStates.Empty }
+            .map { it.index }
+
+        if(emptyIndices.isEmpty())
+            return null
+
+        return emptyIndices.random()
+
+
+    }
+
     /***
-     * Reset the game board data.
+     * Reset the game.
+     */
+    public fun resetGame() {
+        resetBoard()
+        activePlayer.postValue(player)
+        gameState.postValue(GameState.playing)
+
+    }
+
+    /***
+     * Reset the game board cells.
      */
     public fun resetBoard(){
         var gameboardBoxes = boardSize*boardSize
@@ -43,16 +93,19 @@ class GamesViewModel : ViewModel() {
     }
 
     /***
-     * Check winning conditions.
+     * Check winning conditions (horizontal, vertical, diagonal). Then check if the game is draw.
+     * @param player player symbol.
+     *
+     * @return game state after the received data.
      */
-    private fun checkWin(player: BoxStates):Boolean{
+    private fun checkWin(player: BoxStates):GameState{
         // Check rows
         for (row in 0 until boardSize) {
             var count = 0
             for (col in 0 until boardSize) {
                 if (gameBoard[row * boardSize + col] == player) count++
             }
-            if (count == boardSize) return true
+            if (count == boardSize) return GameState.win
         }
 
         // Check columns
@@ -61,7 +114,7 @@ class GamesViewModel : ViewModel() {
             for (row in 0 until boardSize) {
                 if (gameBoard[row * boardSize + col] == player) count++
             }
-            if (count == boardSize) return true
+            if (count == boardSize) return GameState.win
         }
 
         // Check diagonals
@@ -71,8 +124,14 @@ class GamesViewModel : ViewModel() {
             if (gameBoard[i * boardSize + i] == player) countDiagonal1++
             if (gameBoard[i * boardSize + (boardSize - i - 1)] == player) countDiagonal2++
         }
-        if (countDiagonal1 == boardSize || countDiagonal2 == boardSize) return true
+        if (countDiagonal1 == boardSize || countDiagonal2 == boardSize) return GameState.win
 
-        return false
+        // check draw
+        var emptyBoxes = gameBoard.count { it == BoxStates.Empty }
+
+        if(emptyBoxes == 0){
+            return GameState.draw
         }
-}
+        return GameState.playing
+        }
+    }

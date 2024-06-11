@@ -7,18 +7,30 @@ import com.example.tictactoe.enumeration.BoxStates
 import com.example.tictactoe.enumeration.GameState
 import com.example.tictactoe.enumeration.PlayerType
 
-class GamesViewModel : ViewModel() {
-
-    var boardSize : Int = 3
-
+/**
+ * Logic side of the game.
+ *
+ * @property boardSize size of the board.
+ * @property player player data.
+ * @property bot bot data.
+ */
+class GamesViewModel(var boardSize : Int = 3,
+                     private var player: Player = Player(PlayerType.player, BoxStates.X),
+                     private var bot: Player = Player(PlayerType.bot, BoxStates.O))
+    : ViewModel() {
+    /**
+     * Game board cells list.
+     */
     lateinit var gameBoard : MutableList<BoxStates>
 
-    var win : MutableLiveData<GameState> = MutableLiveData(GameState.playing)
+    /**
+     * Game current state.
+     */
+    var gameState : MutableLiveData<GameState> = MutableLiveData(GameState.playing)
 
-    var player: Player = Player(PlayerType.player, BoxStates.X)
-
-    var bot: Player = Player(PlayerType.bot, BoxStates.O)
-
+    /**
+     * Active player.
+     */
     var activePlayer: MutableLiveData<Player> = MutableLiveData(player)
 
     init {
@@ -27,13 +39,14 @@ class GamesViewModel : ViewModel() {
 
     /***
      * Place a token on the board and check if the game is over.
+     * @param place index of the board cell where the token will be placed.
      */
     public fun playTurn(place: Int){
         var playerActive = activePlayer.value
         if(playerActive != null) {
             gameBoard[place] = playerActive.symbol
 
-            win.postValue(checkWin(playerActive.symbol))
+            gameState.postValue(checkWin(playerActive.symbol))
 
             activePlayer.postValue(if(playerActive.type == PlayerType.player) bot else player)
 
@@ -42,6 +55,11 @@ class GamesViewModel : ViewModel() {
         }
     }
 
+    /**
+     * Get a random empty box index.
+     *
+     * @return index of the empty box or null if no empty box.
+     */
     public fun getRandomBox():Int?{
 
         val emptyIndices = gameBoard.withIndex()
@@ -55,23 +73,30 @@ class GamesViewModel : ViewModel() {
 
 
     }
+
     /***
-     * Reset the game board data.
+     * Reset the game.
+     */
+    public fun resetGame() {
+        resetBoard()
+        activePlayer.postValue(player)
+        gameState.postValue(GameState.playing)
+
+    }
+
+    /***
+     * Reset the game board cells.
      */
     public fun resetBoard(){
         var gameboardBoxes = boardSize*boardSize
         gameBoard = MutableList(gameboardBoxes, {BoxStates.Empty})
     }
 
-    public fun resetGame() {
-        resetBoard()
-        activePlayer.postValue(player)
-        win.postValue(GameState.playing)
-
-    }
-
     /***
-     * Check winning conditions.
+     * Check winning conditions (horizontal, vertical, diagonal). Then check if the game is draw.
+     * @param player player symbol.
+     *
+     * @return game state after the received data.
      */
     private fun checkWin(player: BoxStates):GameState{
         // Check rows

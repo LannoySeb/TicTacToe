@@ -177,7 +177,7 @@ class GameFragment : Fragment() {
                 builder.create().show()
             }
         }
-        viewModel.win.observe(viewLifecycleOwner, winObserver)
+        viewModel.gameState.observe(viewLifecycleOwner, winObserver)
 
         // Observer used to update the active player.
         val playerObserver = Observer<Player> { player ->
@@ -186,7 +186,7 @@ class GameFragment : Fragment() {
                     toggleImageviewClick(this@GameFragment.binding.gameBoard, false)
 
                     delay(500)
-                    if(viewModel.win.value == GameState.playing) {
+                    if(viewModel.gameState.value == GameState.playing) {
                         botTurn()
                     }
 

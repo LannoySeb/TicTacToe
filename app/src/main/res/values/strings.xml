@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">tictactoe</string>
-    <!-- TODO: Remove or change this placeholder text -->
+    <string name="play_title">Play</string>
     <string name="win_title">It is a win</string>
     <string name="lose_title">It is a lose</string>
     <string name="reset_title">Reset</string>
+
 </resources>

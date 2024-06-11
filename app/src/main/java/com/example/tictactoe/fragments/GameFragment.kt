@@ -56,15 +56,15 @@ class GameFragment : Fragment() {
             resetBoard()
         }
 
-        boardGame.forEach{
-            it.setOnClickListener {
+        boardGame.forEach{ imageview ->
+            imageview.setOnClickListener {
                 playTurn(it as ImageView)
             }
         }
 
         setupLiveDatas()
 
-        return binding.root;
+        return binding.root
     }
 
     /**

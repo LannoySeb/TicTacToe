@@ -1,17 +1,22 @@
 package com.example.tictactoe.fragments
 
 import android.app.AlertDialog
+import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.TableLayout
+import android.widget.TableRow
 import androidx.lifecycle.Observer
 import com.example.tictactoe.R
 import com.example.tictactoe.databinding.FragmentGameBinding
 import com.example.tictactoe.enumeration.BoxStates
 import com.example.tictactoe.viewmodels.GamesViewModel
+import com.google.android.material.tabs.TabLayout.Tab
+import com.google.android.material.tabs.TabLayout.generateViewId
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
@@ -21,7 +26,7 @@ class GameFragment : Fragment() {
 
     lateinit var binding: FragmentGameBinding
 
-    var boardGame = emptyList<ImageView>()
+    var boardGame = MutableList(0) { ImageView(context) }
 
     val viewModel by viewModel<GamesViewModel>()
 
@@ -32,10 +37,10 @@ class GameFragment : Fragment() {
         // Inflate the layout for this fragment
         binding = FragmentGameBinding.inflate(inflater, container, false)
 
-        boardGame = listOf(binding.box0, binding.box1, binding.box2, binding.box3, binding.box4, binding.box5, binding.box6, binding.box7, binding.box8)
+        initializeBoardGame()
 
         binding.resetButton.setOnClickListener{
-            ResetBoard()
+            resetBoard()
         }
 
         boardGame.forEach{
@@ -66,10 +71,46 @@ class GameFragment : Fragment() {
         }
     }
 
+    private fun initializeBoardGame() {
+        for (row in 0 until viewModel.boardSize) {
+            val tableRow = TableRow(context)
+            tableRow.id = View.generateViewId()
+
+            // Set layout_weight for vertical distribution
+            val rowParams = TableLayout.LayoutParams(
+                TableLayout.LayoutParams.MATCH_PARENT,
+                0
+            )
+            rowParams.weight = 1.0f
+            tableRow.layoutParams = rowParams
+
+            for (col in 0 until viewModel.boardSize) {
+                val imageView = ImageView(context)
+                imageView.id = View.generateViewId()
+
+                val imageParams = TableRow.LayoutParams(
+                    0,
+                    TableRow.LayoutParams.MATCH_PARENT
+                )
+                imageParams.weight = 1.0f
+                imageParams.setMargins(5, 5, 5, 5)
+
+                imageView.layoutParams = imageParams
+                imageView.scaleType = ImageView.ScaleType.FIT_CENTER
+                imageView.setBackgroundColor(Color.GRAY)
+
+                boardGame.add(imageView)
+                tableRow.addView(imageView)
+            }
+            binding.gameBoard.addView(tableRow, rowParams)
+        }
+        resetBoard()
+    }
+
     /***
      * Reset the board to empty state.
      */
-    private fun ResetBoard(){
+    private fun resetBoard(){
         viewModel.resetBoard()
         boardGame.forEach{
             it.setImageResource(0)
@@ -85,7 +126,7 @@ class GameFragment : Fragment() {
                 val builder = AlertDialog.Builder(context)
                 builder.setTitle("It's a win")
                 builder.setPositiveButton("Retry") { dialog, wich ->
-                    ResetBoard()
+                    resetBoard()
                 }
                 builder.create().show()
             }

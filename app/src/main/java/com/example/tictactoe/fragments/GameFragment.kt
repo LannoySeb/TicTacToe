@@ -132,7 +132,7 @@ class GameFragment : Fragment() {
      */
     private fun setupLiveDatas(){
 
-        //
+
         val winObserver = Observer<GameState>{ win ->
             if(win == GameState.win) {
                 val builder = AlertDialog.Builder(context)
@@ -175,8 +175,9 @@ class GameFragment : Fragment() {
 
     private fun botTurn(){
         val selectedId = viewModel.getRandomBox()
-        if(selectedId != null)
-        boardGame[selectedId].performClick()
+        if(selectedId != null) {
+            boardGame[selectedId].performClick()
+        }
     }
 
     /**

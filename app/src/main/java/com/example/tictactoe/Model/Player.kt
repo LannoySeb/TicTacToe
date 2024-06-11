@@ -6,5 +6,8 @@ import com.example.tictactoe.enumeration.PlayerType
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class Player(val type: PlayerType, val symbol: BoxStates ) : Parcelable {
+data class Player(
+    val type: PlayerType,
+    val symbol: BoxStates )
+    : Parcelable {
 }

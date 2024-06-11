@@ -9,7 +9,7 @@ import com.example.tictactoe.enumeration.PlayerType
 
 class GamesViewModel : ViewModel() {
 
-    var boardSize : Int = 7
+    var boardSize : Int = 3
 
     lateinit var gameBoard : MutableList<BoxStates>
 

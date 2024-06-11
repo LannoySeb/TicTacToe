@@ -10,13 +10,17 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TableLayout
 import android.widget.TableRow
+import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
+import com.example.tictactoe.Model.Player
 import com.example.tictactoe.R
 import com.example.tictactoe.databinding.FragmentGameBinding
 import com.example.tictactoe.enumeration.BoxStates
+import com.example.tictactoe.enumeration.PlayerType
 import com.example.tictactoe.viewmodels.GamesViewModel
-import com.google.android.material.tabs.TabLayout.Tab
-import com.google.android.material.tabs.TabLayout.generateViewId
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
@@ -45,8 +49,7 @@ class GameFragment : Fragment() {
 
         boardGame.forEach{
             it.setOnClickListener {
-                ToggleBox(it as ImageView, viewModel.nextToken)
-                viewModel.playTurn(boardGame.indexOf(it))
+                playTurn(it as ImageView)
             }
         }
 
@@ -54,6 +57,12 @@ class GameFragment : Fragment() {
 
         return binding.root;
     }
+
+    private fun playTurn(box: ImageView){
+        ToggleBox(box, viewModel.activePlayer.value!!.symbol)
+        viewModel.playTurn(boardGame.indexOf(box))
+    }
+
 
     /***
      * Change the icon of an empty box.
@@ -130,8 +139,25 @@ class GameFragment : Fragment() {
                 }
                 builder.create().show()
             }
-    }
+        }
         viewModel.win.observe(viewLifecycleOwner, winObserver)
+
+        val playerObserver = Observer<Player> { player ->
+            if (player.type == PlayerType.bot) {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    delay(500)
+                    botTurn()
+
+                }
+            }
+        }
+
+        viewModel.activePlayer.observe(viewLifecycleOwner, playerObserver)
+    }
+
+    private fun botTurn(){
+        var SelectedId = viewModel.getRandomBox()
+        boardGame[SelectedId].performClick()
     }
 
 }

@@ -2,17 +2,23 @@ package com.example.tictactoe.viewmodels
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.tictactoe.Model.Player
 import com.example.tictactoe.enumeration.BoxStates
+import com.example.tictactoe.enumeration.PlayerType
 
 class GamesViewModel : ViewModel() {
 
-    var boardSize : Int = 3
+    var boardSize : Int = 6
 
     lateinit var gameBoard : MutableList<BoxStates>
 
-    var nextToken : BoxStates = BoxStates.X
-
     var win : MutableLiveData<Boolean> = MutableLiveData(false)
+
+    var player: Player = Player(PlayerType.player, BoxStates.X)
+
+    var bot: Player = Player(PlayerType.bot, BoxStates.O)
+
+    var activePlayer: MutableLiveData<Player> = MutableLiveData(player)
 
     init {
         resetBoard()
@@ -21,19 +27,30 @@ class GamesViewModel : ViewModel() {
     /***
      * Place a token on the board and check if the game is over.
      */
-    public fun playTurn(place:Int){
-        gameBoard[place] = nextToken
+    public fun playTurn(place: Int){
+        var playerActive = activePlayer.value
+        if(playerActive != null) {
+            gameBoard[place] = playerActive.symbol
 
-        win.postValue(checkWin(nextToken))
+            win.postValue(checkWin(playerActive.symbol))
 
-        if(nextToken == BoxStates.X){
-            nextToken = BoxStates.O
-        }
-        else{
-            nextToken = BoxStates.X
+            activePlayer.postValue(if(playerActive.type == PlayerType.player) bot else player)
+
+        }else{
+            // TODO handle error
         }
     }
 
+    public fun getRandomBox():Int{
+
+        val emptyIndices = gameBoard.withIndex()
+            .filter { it.value == BoxStates.Empty }
+            .map { it.index }
+
+        return emptyIndices.random()
+
+
+    }
     /***
      * Reset the game board data.
      */

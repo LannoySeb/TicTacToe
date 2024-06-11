@@ -1,8 +1,6 @@
 package com.example.tictactoe.fragments
 
 import android.app.AlertDialog
-import android.graphics.Color
-import android.media.Image.Plane
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -22,11 +20,10 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class GameFragment : Fragment() {
 
     lateinit var binding: FragmentGameBinding
+
     var boardGame = emptyList<ImageView>()
+
     val viewModel by viewModel<GamesViewModel>()
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,10 +37,11 @@ class GameFragment : Fragment() {
         binding.resetButton.setOnClickListener{
             ResetBoard()
         }
+
         boardGame.forEach{
             it.setOnClickListener {
                 ToggleBox(it as ImageView, viewModel.nextToken)
-                viewModel.placeToken(boardGame.indexOf(it))
+                viewModel.playTurn(boardGame.indexOf(it))
             }
         }
 
@@ -52,18 +50,25 @@ class GameFragment : Fragment() {
         return binding.root;
     }
 
+    /***
+     * Change the icon of an empty box.
+     */
     private fun ToggleBox(box:ImageView, state:BoxStates) {
-        if(viewModel.gameBoard[boardGame.indexOf(box)] == BoxStates.Empty)
-        when (state) {
-            BoxStates.X -> box.setImageResource(R.drawable.x)
+        if(viewModel.gameBoard[boardGame.indexOf(box)] == BoxStates.Empty) {
+            when (state) {
+                BoxStates.X -> box.setImageResource(R.drawable.x)
 
-            BoxStates.O -> box.setImageResource(R.drawable.o)
+                BoxStates.O -> box.setImageResource(R.drawable.o)
 
-            else -> box.setImageResource(0)
+                else -> box.setImageResource(0)
 
+            }
         }
     }
 
+    /***
+     * Reset the board to empty state.
+     */
     private fun ResetBoard(){
         viewModel.resetBoard()
         boardGame.forEach{
@@ -71,6 +76,9 @@ class GameFragment : Fragment() {
         }
     }
 
+    /***
+     * Setup of lives data observers.
+     */
     private fun setupLiveDatas(){
         val winObserver = Observer<Boolean>{ win ->
             if(win) {

@@ -3,11 +3,12 @@ package com.example.tictactoe.viewmodels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.tictactoe.enumeration.BoxStates
-import java.util.Dictionary
 
 class GamesViewModel : ViewModel() {
 
-    var gameBoard : MutableList<BoxStates> = mutableListOf(BoxStates.Empty, BoxStates.Empty ,BoxStates.Empty,BoxStates.Empty,BoxStates.Empty,BoxStates.Empty,BoxStates.Empty,BoxStates.Empty,BoxStates.Empty)
+    var boardSize : Int = 3
+
+    lateinit var gameBoard : MutableList<BoxStates>
 
     var nextToken : BoxStates = BoxStates.X
 
@@ -17,10 +18,13 @@ class GamesViewModel : ViewModel() {
         resetBoard()
     }
 
-    public fun placeToken(place:Int){
+    /***
+     * Place a token on the board and check if the game is over.
+     */
+    public fun playTurn(place:Int){
         gameBoard[place] = nextToken
 
-checkWin()
+        win.postValue(checkWin(nextToken))
 
         if(nextToken == BoxStates.X){
             nextToken = BoxStates.O
@@ -30,42 +34,45 @@ checkWin()
         }
     }
 
+    /***
+     * Reset the game board data.
+     */
     public fun resetBoard(){
-        gameBoard = mutableListOf(BoxStates.Empty, BoxStates.Empty, BoxStates.Empty, BoxStates.Empty, BoxStates.Empty, BoxStates.Empty, BoxStates.Empty, BoxStates.Empty, BoxStates.Empty)
+        var gameboardBoxes = boardSize*boardSize
+        gameBoard = MutableList(gameboardBoxes, {BoxStates.Empty})
     }
 
-    private fun checkWin(){
-        if(checkWinHorizontal() || checkWinVertical() || checkWinDiagonal()){
-            win.postValue(true)
-        }
-    }
-    private fun checkWinHorizontal():Boolean{
-        for (i in 0..2){
-            if(gameBoard[i]!= BoxStates.Empty && gameBoard[i] == gameBoard[i+1] && gameBoard[i] == gameBoard[i+2]){
-                return true
+    /***
+     * Check winning conditions.
+     */
+    private fun checkWin(player: BoxStates):Boolean{
+        // Check rows
+        for (row in 0 until boardSize) {
+            var count = 0
+            for (col in 0 until boardSize) {
+                if (gameBoard[row * boardSize + col] == player) count++
             }
+            if (count == boardSize) return true
         }
-        return false
-    }
 
-    private fun checkWinVertical():Boolean{
-        for (i in 0..2){
-            if(gameBoard[i]!= BoxStates.Empty && gameBoard[i] == gameBoard[i+3] && gameBoard[i] == gameBoard[i+6]){
-                return true
+        // Check columns
+        for (col in 0 until boardSize) {
+            var count = 0
+            for (row in 0 until boardSize) {
+                if (gameBoard[row * boardSize + col] == player) count++
             }
+            if (count == boardSize) return true
         }
-        return false
-    }
 
-    private fun checkWinDiagonal():Boolean{
-        if(gameBoard[4]!= BoxStates.Empty){
-            if(gameBoard[0] == gameBoard[4] && gameBoard[0] == gameBoard[8]){
-                return true
-            }
-            if(gameBoard[2] == gameBoard[4] && gameBoard[2] == gameBoard[6]){
-                return true
-            }
+        // Check diagonals
+        var countDiagonal1 = 0
+        var countDiagonal2 = 0
+        for (i in 0 until boardSize) {
+            if (gameBoard[i * boardSize + i] == player) countDiagonal1++
+            if (gameBoard[i * boardSize + (boardSize - i - 1)] == player) countDiagonal2++
         }
+        if (countDiagonal1 == boardSize || countDiagonal2 == boardSize) return true
+
         return false
-    }
+        }
 }

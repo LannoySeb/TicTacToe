@@ -90,13 +90,13 @@ class GameFragment : Fragment() {
 
                 val imageParams = TableRow.LayoutParams(
                     0,
-                    TableRow.LayoutParams.MATCH_PARENT
+                    150
                 )
                 imageParams.weight = 1.0f
                 imageParams.setMargins(5, 5, 5, 5)
 
                 imageView.layoutParams = imageParams
-                imageView.scaleType = ImageView.ScaleType.FIT_CENTER
+                imageView.scaleType = ImageView.ScaleType.CENTER_INSIDE
                 imageView.setBackgroundColor(Color.GRAY)
 
                 boardGame.add(imageView)

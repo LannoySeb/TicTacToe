@@ -19,7 +19,7 @@
         android:background="@drawable/border"
         android:backgroundTint="@color/gray"
         android:textColor="@color/gray"
-        android:padding="5dp"
+        android:padding="10dp"
         style="@style/MainTitleTextStyle"/>
 
     <TextView

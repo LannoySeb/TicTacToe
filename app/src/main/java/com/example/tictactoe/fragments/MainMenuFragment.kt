@@ -7,20 +7,25 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
-import com.example.tictactoe.R
 import com.example.tictactoe.databinding.FragmentMainMenuBinding
 import com.example.tictactoe.enumeration.BoxStates
-import com.example.tictactoe.viewmodels.GamesViewModel
 import com.example.tictactoe.viewmodels.MainMenuViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-
+/**
+ * Main menu of the tic tac toe game. Used to set the presets of the game.
+ */
 class MainMenuFragment : Fragment() {
 
-    val viewModel by viewModel<MainMenuViewModel>()
+    /**
+     * [MainMenuViewModel] injected by koin.
+     */
+    private val viewModel by viewModel<MainMenuViewModel>()
 
+    /**
+     * Binding for the fragment.
+     */
     private lateinit var binding: FragmentMainMenuBinding
 
     override fun onCreateView(
@@ -32,11 +37,11 @@ class MainMenuFragment : Fragment() {
         setupLiveDataObservers()
 
         binding.playAsXButton.setOnClickListener {
-            viewModel.SelectedToken.value = BoxStates.X
+            viewModel.selectedToken.value = BoxStates.X
         }
 
         binding.playAsOButton.setOnClickListener {
-            viewModel.SelectedToken.value = BoxStates.O
+            viewModel.selectedToken.value = BoxStates.O
         }
 
         binding.boardSizeSlider.addOnChangeListener { _, value, _ ->
@@ -56,6 +61,11 @@ class MainMenuFragment : Fragment() {
         return binding.root
     }
 
+    /**
+     * Toggles the visibility of the check marks below the selected token.
+     * @param imageView The check mark to swich visibility.
+     * @param isVisible The visibility to set.
+     */
     private fun toggleCheckMarks(imageView: ImageView, isVisible:Boolean){
         if(isVisible){
             imageView.visibility = View.VISIBLE
@@ -65,7 +75,12 @@ class MainMenuFragment : Fragment() {
         }
     }
 
+    /**
+     * Sets up the observers for the viewModel livedata.
+     */
     private fun setupLiveDataObservers(){
+
+        // Observe wich token is selected.
         val selectedTokenObserver = Observer<BoxStates>{token ->
             if(token != null) {
                 when (token) {
@@ -79,16 +94,17 @@ class MainMenuFragment : Fragment() {
                         toggleCheckMarks(binding.oCheckMark, true)
                     }
 
+                    // In case of bug, reselect x
                     BoxStates.Empty -> {
-                        toggleCheckMarks(binding.xCheckMark, true)
-                        toggleCheckMarks(binding.oCheckMark, false)
+                        binding.playAsXButton.performClick()
                     }
                 }
             }
         }
 
-        viewModel.SelectedToken.observe(viewLifecycleOwner, selectedTokenObserver)
+        viewModel.selectedToken.observe(viewLifecycleOwner, selectedTokenObserver)
 
+        // observe the board size and update the ui
         val boardSizeObserver = Observer<Int>{boardSize ->
             if(boardSize != null){
                 binding.boardSizeTextView.text = "Board size: ${boardSize}"

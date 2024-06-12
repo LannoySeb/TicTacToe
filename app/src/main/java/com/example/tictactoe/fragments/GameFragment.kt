@@ -35,7 +35,10 @@ class GameFragment : Fragment() {
      */
     private lateinit var binding: FragmentGameBinding
 
-    val args: GameFragmentArgs by navArgs()
+    /**
+     * Arguments passed by navigation component.
+     */
+    private val args: GameFragmentArgs by navArgs()
 
     /**
      * [GamesViewModel] injected by koin.

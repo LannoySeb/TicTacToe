@@ -5,5 +5,5 @@
     <string name="win_title">It is a win</string>
     <string name="lose_title">It is a lose</string>
     <string name="reset_title">Replay</string>
-    <string name="board_size">Board size: </string>
+    <string name="board_size_text">Board size: </string>
 </resources>

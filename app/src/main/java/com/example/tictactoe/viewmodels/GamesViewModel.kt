@@ -53,8 +53,6 @@ class GamesViewModel(
             if(gameState.value == GameState.playing) {
                 activePlayer.postValue(if (playerActive.type == PlayerType.player) bot else player)
             }
-        }else{
-            // TODO handle error
         }
     }
 

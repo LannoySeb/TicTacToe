@@ -12,6 +12,7 @@ import android.widget.TableLayout
 import android.widget.TableRow
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.tictactoe.Model.Player
 import com.example.tictactoe.R
@@ -64,6 +65,25 @@ class GameFragment : Fragment() {
             resetBoard()
         }
 
+        binding.options.setOnClickListener{
+            var filledBox = viewModel.gameBoard.find { box -> box != BoxStates.Empty }
+            if(filledBox != null){
+                val builder = AlertDialog.Builder(context)
+                builder.setTitle(getString(R.string.leave_game_title))
+                builder.setMessage(getString(R.string.leave_game_message))
+                builder.setPositiveButton(R.string.leave) { dialog, wich ->
+                    navigateToMenu()
+                }
+                builder.setNegativeButton(R.string.stay) { dialog, wich ->
+                    dialog.dismiss()
+                }
+                builder.create().show()
+            }
+            else{
+                navigateToMenu()
+            }
+        }
+
         boardGame.forEach{ imageview ->
             imageview.setOnClickListener {
                 playTurn(it as ImageView)
@@ -73,6 +93,14 @@ class GameFragment : Fragment() {
         setupLiveDatas()
 
         return binding.root
+    }
+
+    /**
+     * Navigate to the [MainMenuFragment]
+     */
+    private fun navigateToMenu(){
+        val navController = findNavController()
+       navController.navigate(R.id.mainMenuFragment)
     }
 
     /**

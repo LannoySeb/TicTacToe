@@ -19,6 +19,9 @@
         <argument
             android:name="BoardSize"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_gameFragment_to_mainMenuFragment"
+            app:destination="@id/mainMenuFragment" />
     </fragment>
     <fragment
         android:id="@+id/mainMenuFragment"

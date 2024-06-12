@@ -11,4 +11,10 @@
     <string name="reset_title">Reset</string>
     <string name="replay">Replay</string>
     <string name="retry">Retry</string>
+    <string name="back">Back</string>
+    <string name="leave">Leave</string>
+    <string name="stay">Stay</string>
+    <string name="leave_game_title">The game has already started!</string>
+    <string name="leave_game_message">If you leave the progress will be lost.</string>
+
 </resources>

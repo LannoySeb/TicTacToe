@@ -1,11 +1,14 @@
 <resources>
     <string name="app_name">tictactoe</string>
+
     <string name="main_title">Tic Tac Toe"</string>
     <string name="play_title">Play</string>
+    <string name="board_size_text">Board size: </string>
+    <string name="main_menu_text">Use theses option to customize your game session.</string>
+
     <string name="win_title">It is a win</string>
     <string name="draw_title">It is a draw"</string>
     <string name="reset_title">Reset</string>
     <string name="replay">Replay</string>
     <string name="retry">Retry</string>
-    <string name="board_size_text">Board size: </string>
 </resources>

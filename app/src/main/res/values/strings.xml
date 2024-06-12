@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">tictactoe</string>
+    <string name="main_title">Tic Tac Toe"</string>
     <string name="play_title">Play</string>
     <string name="win_title">It is a win</string>
     <string name="lose_title">It is a lose</string>
-    <string name="reset_title">Reset</string>
-
+    <string name="reset_title">Replay</string>
 </resources>

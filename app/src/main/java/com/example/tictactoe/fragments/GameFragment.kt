@@ -12,6 +12,7 @@ import android.widget.TableLayout
 import android.widget.TableRow
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.navArgs
 import com.example.tictactoe.Model.Player
 import com.example.tictactoe.R
 import com.example.tictactoe.databinding.FragmentGameBinding
@@ -22,6 +23,7 @@ import com.example.tictactoe.viewmodels.GamesViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 /**
  * fragment that will display the boardGame.
@@ -33,10 +35,13 @@ class GameFragment : Fragment() {
      */
     private lateinit var binding: FragmentGameBinding
 
+    val args: GameFragmentArgs by navArgs()
+
     /**
      * [GamesViewModel] injected by koin.
      */
-    val viewModel by viewModel<GamesViewModel>()
+    val viewModel by viewModel<GamesViewModel>{parametersOf(args.playerData, args.botData)}
+
 
     /**
      * GameBoard as a list of [ImageView]

@@ -45,7 +45,7 @@ class GamesViewModel(
      */
     public fun playTurn(place: Int){
         var playerActive = activePlayer.value
-        if(playerActive != null) {
+        if(playerActive != null && gameBoard[place] == BoxStates.Empty) {
             gameBoard[place] = playerActive.symbol
 
             gameState.postValue(checkWin(playerActive.symbol))

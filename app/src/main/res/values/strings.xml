@@ -1,7 +1,7 @@
 <resources>
-    <string name="app_name">tictactoe</string>
+    <string name="app_name" translatable="false">tictactoe</string>
 
-    <string name="main_title">Tic Tac Toe"</string>
+    <string name="main_title" translatable="false">Tic Tac Toe"</string>
     <string name="play_title">Play</string>
     <string name="board_size_text">Board size: </string>
     <string name="main_menu_text">Use theses options to customize your game session.</string>
@@ -16,5 +16,8 @@
     <string name="stay">Stay</string>
     <string name="leave_game_title">The game has already started!</string>
     <string name="leave_game_message">If you leave the progress will be lost.</string>
+    <string name="win_message">The %1$s win</string>
+    <string name="Player">player</string>
+    <string name="Bot">bot</string>
 
 </resources>

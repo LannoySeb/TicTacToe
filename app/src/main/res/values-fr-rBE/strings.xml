@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="play_title">Jouer</string>
+    <string name="board_size_text">Taille du plateau:</string>
+    <string name="main_menu_text">Utilisez ces options pour personnaliser votre partie</string>
+    <string name="win_title">C\'est une victoire</string>
+    <string name="draw_title">C\'est une égualité</string>
+    <string name="reset_title">Relancer</string>
+    <string name="replay">Rejouer</string>
+    <string name="retry">Réessayer</string>
+    <string name="back">Retour</string>
+    <string name="leave">Quitter</string>
+    <string name="stay">Rester</string>
+    <string name="leave_game_title">La partie a déja commencer!</string>
+    <string name="leave_game_message">Si vous quittez la progression sera perdue</string>
+    <string name="win_message">Le %1$s gagne</string>
+    <string name="Player">joueur</string>
+    <string name="Bot">bot</string>
+</resources>

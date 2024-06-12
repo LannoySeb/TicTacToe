@@ -167,7 +167,7 @@ class GameFragment : Fragment() {
             if(win == GameState.win) {
                 val builder = AlertDialog.Builder(context)
                 builder.setTitle("The ${viewModel.activePlayer.value!!.type.name} win")
-                builder.setPositiveButton("Retry") { dialog, wich ->
+                builder.setPositiveButton(getString(R.string.replay)) { dialog, wich ->
                     viewModel.resetGame()
                     resetBoard()
                 }
@@ -177,8 +177,8 @@ class GameFragment : Fragment() {
             // nobody win
             else if(win == GameState.draw) {
                 val builder = AlertDialog.Builder(context)
-                builder.setTitle("It's a draw")
-                builder.setPositiveButton("Retry") { dialog, wich ->
+                builder.setTitle(getString(R.string.draw_title))
+                builder.setPositiveButton(getString(R.string.retry)) { dialog, wich ->
                     viewModel.resetGame()
                     resetBoard()
                 }

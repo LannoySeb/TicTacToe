@@ -9,7 +9,14 @@
         android:id="@+id/gameFragment"
         android:name="com.example.tictactoe.fragments.GameFragment"
         android:label="fragment_game"
-        tools:layout="@layout/fragment_game" />
+        tools:layout="@layout/fragment_game" >
+        <argument
+            android:name="PlayerData"
+            app:argType="com.example.tictactoe.Model.Player" />
+        <argument
+            android:name="BotData"
+            app:argType="com.example.tictactoe.Model.Player" />
+    </fragment>
     <fragment
         android:id="@+id/mainMenuFragment"
         android:name="com.example.tictactoe.fragments.MainMenuFragment"

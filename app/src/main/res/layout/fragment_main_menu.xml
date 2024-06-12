@@ -12,21 +12,74 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="320dp"
+        android:layout_marginTop="80dp"
         android:text="@string/app_name"
+        android:textSize="56sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/playButton"
-        android:text="@string/play_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="@string/play_title"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView"
-        app:layout_constraintVertical_bias="0.005" />
+        app:layout_constraintVertical_bias="0.768" />
+
+    <ImageButton
+        android:id="@+id/playAsXButton"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginStart="96dp"
+        android:src="@drawable/x"
+        android:background="@color/lightgray"
+        app:layout_constraintBottom_toTopOf="@+id/playButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView"
+        app:layout_constraintVertical_bias="0.483" />
+
+    <ImageView
+        android:id="@+id/xCheckMark"
+        android:layout_width="35dp"
+        android:layout_height="37dp"
+        android:src="@drawable/checkmark"
+        app:layout_constraintBottom_toTopOf="@+id/playButton"
+        app:layout_constraintEnd_toEndOf="@+id/playAsXButton"
+        app:layout_constraintHorizontal_bias="0.514"
+        app:layout_constraintStart_toStartOf="@+id/playAsXButton"
+        app:layout_constraintTop_toBottomOf="@+id/playAsXButton"
+        app:layout_constraintVertical_bias="0.0"
+        android:visibility="gone"/>
+
+    <ImageButton
+        android:id="@+id/playAsOButton"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:src="@drawable/o"
+        android:background="@color/lightgray"
+        app:layout_constraintBottom_toTopOf="@+id/playButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.377"
+        app:layout_constraintStart_toEndOf="@+id/playAsXButton"
+        app:layout_constraintTop_toBottomOf="@+id/textView"
+        app:layout_constraintVertical_bias="0.482" />
+
+    <ImageView
+        android:id="@+id/oCheckMark"
+        android:layout_width="35dp"
+        android:layout_height="37dp"
+        android:src="@drawable/checkmark"
+        app:layout_constraintBottom_toTopOf="@+id/playButton"
+        app:layout_constraintEnd_toEndOf="@+id/playAsOButton"
+        app:layout_constraintHorizontal_bias="0.514"
+        app:layout_constraintStart_toStartOf="@+id/playAsOButton"
+        app:layout_constraintTop_toBottomOf="@+id/playAsOButton"
+        app:layout_constraintVertical_bias="0.0"
+        android:visibility="gone"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

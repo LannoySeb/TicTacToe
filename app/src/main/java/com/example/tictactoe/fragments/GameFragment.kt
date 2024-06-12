@@ -166,7 +166,7 @@ class GameFragment : Fragment() {
             // user win
             if(win == GameState.win) {
                 val builder = AlertDialog.Builder(context)
-                builder.setTitle("It's a win")
+                builder.setTitle("The ${viewModel.activePlayer.value!!.type.name} win")
                 builder.setPositiveButton("Retry") { dialog, wich ->
                     viewModel.resetGame()
                     resetBoard()

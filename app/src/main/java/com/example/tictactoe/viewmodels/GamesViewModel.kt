@@ -50,8 +50,9 @@ class GamesViewModel(
 
             gameState.postValue(checkWin(playerActive.symbol))
 
-            activePlayer.postValue(if(playerActive.type == PlayerType.player) bot else player)
-
+            if(gameState.value == GameState.playing) {
+                activePlayer.postValue(if (playerActive.type == PlayerType.player) bot else player)
+            }
         }else{
             // TODO handle error
         }

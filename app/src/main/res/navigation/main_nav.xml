@@ -16,6 +16,9 @@
         <argument
             android:name="BotData"
             app:argType="com.example.tictactoe.Model.Player" />
+        <argument
+            android:name="BoardSize"
+            app:argType="integer" />
     </fragment>
     <fragment
         android:id="@+id/mainMenuFragment"

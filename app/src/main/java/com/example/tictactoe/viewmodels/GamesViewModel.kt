@@ -15,11 +15,11 @@ import com.example.tictactoe.enumeration.PlayerType
  * @property bot bot data.
  */
 class GamesViewModel(
-                     var player: Player,
-                     var bot: Player)
+                    var boardSize: Int,
+                    var player: Player,
+                    var bot: Player)
     : ViewModel() {
 
-    var boardSize : Int = 3
     /**
      * Game board cells list.
      */

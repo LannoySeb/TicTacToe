@@ -39,10 +39,15 @@ class MainMenuFragment : Fragment() {
             viewModel.SelectedToken.value = BoxStates.O
         }
 
+        binding.boardSizeSlider.addOnChangeListener { _, value, _ ->
+            viewModel.boardSize.value = value.toInt()
+        }
+
         binding.playButton.setOnClickListener {
             var player = viewModel.generatePlayer()
             var bot = viewModel.generateBot(player)
-            var action = MainMenuFragmentDirections.actionMainMenuFragmentToGameFragment(player,bot)
+            var boardSize = viewModel.boardSize.value
+            var action = MainMenuFragmentDirections.actionMainMenuFragmentToGameFragment(player,bot,boardSize!!)
 
             val navController = findNavController()
             navController.navigate(action)
@@ -83,5 +88,12 @@ class MainMenuFragment : Fragment() {
         }
 
         viewModel.SelectedToken.observe(viewLifecycleOwner, selectedTokenObserver)
+
+        val boardSizeObserver = Observer<Int>{boardSize ->
+            if(boardSize != null){
+                binding.boardSizeTextView.text = "Board size: ${boardSize}"
+            }
+        }
+        viewModel.boardSize.observe(viewLifecycleOwner, boardSizeObserver)
     }
 }

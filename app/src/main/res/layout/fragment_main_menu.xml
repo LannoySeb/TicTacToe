@@ -31,18 +31,6 @@
         app:layout_constraintTop_toBottomOf="@+id/textView"
         app:layout_constraintVertical_bias="0.768" />
 
-    <ImageButton
-        android:id="@+id/playAsXButton"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_marginStart="96dp"
-        android:src="@drawable/x"
-        android:background="@color/lightgray"
-        app:layout_constraintBottom_toTopOf="@+id/playButton"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView"
-        app:layout_constraintVertical_bias="0.483" />
-
     <ImageView
         android:id="@+id/xCheckMark"
         android:layout_width="35dp"
@@ -60,14 +48,26 @@
         android:id="@+id/playAsOButton"
         android:layout_width="70dp"
         android:layout_height="70dp"
-        android:src="@drawable/o"
         android:background="@color/lightgray"
+        android:src="@drawable/o"
         app:layout_constraintBottom_toTopOf="@+id/playButton"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.377"
+        app:layout_constraintHorizontal_bias="0.451"
         app:layout_constraintStart_toEndOf="@+id/playAsXButton"
         app:layout_constraintTop_toBottomOf="@+id/textView"
-        app:layout_constraintVertical_bias="0.482" />
+        app:layout_constraintVertical_bias="0.187" />
+
+    <ImageButton
+        android:id="@+id/playAsXButton"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginStart="96dp"
+        android:background="@color/lightgray"
+        android:src="@drawable/x"
+        app:layout_constraintBottom_toTopOf="@+id/playButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView"
+        app:layout_constraintVertical_bias="0.187" />
 
     <ImageView
         android:id="@+id/oCheckMark"
@@ -81,5 +81,30 @@
         app:layout_constraintTop_toBottomOf="@+id/playAsOButton"
         app:layout_constraintVertical_bias="0.0"
         android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/boardSizeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Board Size"
+        app:layout_constraintBottom_toTopOf="@+id/boardSizeSlider"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/playAsXButton"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <com.google.android.material.slider.Slider
+        android:id="@+id/boardSizeSlider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:valueFrom="3"
+        android:valueTo="10"
+        android:stepSize="1"
+        app:layout_constraintBottom_toTopOf="@+id/playButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/playAsXButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -40,7 +40,7 @@ class GameFragment : Fragment() {
     /**
      * [GamesViewModel] injected by koin.
      */
-    val viewModel by viewModel<GamesViewModel>{parametersOf(args.playerData, args.botData)}
+    val viewModel by viewModel<GamesViewModel>{parametersOf(args.boardSize, args.playerData, args.botData)}
 
 
     /**

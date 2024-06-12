@@ -9,6 +9,7 @@ import com.example.tictactoe.enumeration.PlayerType
 class MainMenuViewModel(
     var SelectedToken: MutableLiveData<BoxStates> = MutableLiveData(BoxStates.X)): ViewModel() {
 
+        var boardSize: MutableLiveData<Int> = MutableLiveData(3)
     public fun generatePlayer():Player{
         if(SelectedToken.value!=null) {
             return Player(PlayerType.player, SelectedToken.value!!)

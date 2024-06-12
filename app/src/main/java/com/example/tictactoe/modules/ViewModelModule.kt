@@ -10,6 +10,6 @@ import org.koin.androidx.viewmodel.dsl.viewModel
  * Viewmodel injectables by koin.
  */
 val ViewModelModule = module {
-    viewModel{GamesViewModel(get(),get())}
+    viewModel{GamesViewModel(get(),get(),get())}
     viewModel{MainMenuViewModel()}
 }

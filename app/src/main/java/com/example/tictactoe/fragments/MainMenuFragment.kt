@@ -8,10 +8,12 @@ import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import com.example.tictactoe.R
 import com.example.tictactoe.databinding.FragmentMainMenuBinding
 import com.example.tictactoe.enumeration.BoxStates
 import com.example.tictactoe.viewmodels.MainMenuViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.util.StringJoiner
 
 /**
  * Main menu of the tic tac toe game. Used to set the presets of the game.
@@ -52,7 +54,11 @@ class MainMenuFragment : Fragment() {
             var player = viewModel.generatePlayer()
             var bot = viewModel.generateBot(player)
             var boardSize = viewModel.boardSize.value
-            var action = MainMenuFragmentDirections.actionMainMenuFragmentToGameFragment(player,bot,boardSize!!)
+            var action = MainMenuFragmentDirections.actionMainMenuFragmentToGameFragment(
+                player,
+                bot,
+                boardSize!!
+            )
 
             val navController = findNavController()
             navController.navigate(action)
@@ -66,11 +72,10 @@ class MainMenuFragment : Fragment() {
      * @param imageView The check mark to swich visibility.
      * @param isVisible The visibility to set.
      */
-    private fun toggleCheckMarks(imageView: ImageView, isVisible:Boolean){
-        if(isVisible){
+    private fun toggleCheckMarks(imageView: ImageView, isVisible: Boolean) {
+        if (isVisible) {
             imageView.visibility = View.VISIBLE
-        }
-        else{
+        } else {
             imageView.visibility = View.GONE
         }
     }
@@ -78,18 +83,18 @@ class MainMenuFragment : Fragment() {
     /**
      * Sets up the observers for the viewModel livedata.
      */
-    private fun setupLiveDataObservers(){
+    private fun setupLiveDataObservers() {
 
         // Observe wich token is selected.
-        val selectedTokenObserver = Observer<BoxStates>{token ->
-            if(token != null) {
+        val selectedTokenObserver = Observer<BoxStates> { token ->
+            if (token != null) {
                 when (token) {
                     BoxStates.X -> {
                         toggleCheckMarks(binding.xCheckMark, true)
                         toggleCheckMarks(binding.oCheckMark, false)
                     }
 
-                    BoxStates.O  -> {
+                    BoxStates.O -> {
                         toggleCheckMarks(binding.xCheckMark, false)
                         toggleCheckMarks(binding.oCheckMark, true)
                     }
@@ -105,9 +110,14 @@ class MainMenuFragment : Fragment() {
         viewModel.selectedToken.observe(viewLifecycleOwner, selectedTokenObserver)
 
         // observe the board size and update the ui
-        val boardSizeObserver = Observer<Int>{boardSize ->
-            if(boardSize != null){
-                binding.boardSizeTextView.text = "Board size: ${boardSize}"
+        val boardSizeObserver = Observer<Int> { boardSize ->
+            if (boardSize != null) {
+                var joiner = StringJoiner(" ")
+                    .add(getString(R.string.board_size_text))
+                    .add(boardSize.toString())
+
+                binding.boardSizeTextView.text = joiner.toString()
+
             }
         }
         viewModel.boardSize.observe(viewLifecycleOwner, boardSizeObserver)

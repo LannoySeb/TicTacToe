@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.tictactoe.Model.Player
 import com.example.tictactoe.enumeration.BoxStates
+import com.example.tictactoe.enumeration.Direction
 import com.example.tictactoe.enumeration.GameState
 import com.example.tictactoe.enumeration.PlayerType
 
@@ -101,22 +102,12 @@ class GamesViewModel(
      */
     private fun checkWin(player: BoxStates):GameState{
         // Check rows
-        for (row in 0 until boardSize) {
-            var count = 0
-            for (col in 0 until boardSize) {
-                if (gameBoard[row * boardSize + col] == player) count++
-            }
-            if (count == boardSize) return GameState.win
+        if(checkLines(player,Direction.Row)){
+            return GameState.win
         }
-
         // Check columns
-        for (col in 0 until boardSize) {
-            var count = 0
-            for (row in 0 until boardSize) {
-                if (gameBoard[row * boardSize + col] == player) count++
-            }
-            if (count == boardSize) return GameState.win
-        }
+        if(checkLines(player, Direction.Column))
+            return GameState.win
 
         // Check diagonals
         var countDiagonal1 = 0
@@ -135,4 +126,20 @@ class GamesViewModel(
         }
         return GameState.playing
         }
+    private fun checkLines(player: BoxStates,direction: Direction) : Boolean{
+        for (i in 0 until boardSize) {
+            var count = 0
+            for (j in 0 until boardSize) {
+                val index = if (direction == Direction.Row) {
+                    i * boardSize + j
+                } else {
+                    j * boardSize + i
+                }
+                if (gameBoard[index] == player) count++
+            }
+            if (count == boardSize) return true
+        }
+        return false
     }
+    }
+
